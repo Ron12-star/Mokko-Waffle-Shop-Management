@@ -1,0 +1,211 @@
+/* ─── Dashboard Page ─── */
+
+/* ─── Tooltip ─── */
+.chartTooltip {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+}
+
+.tooltipLabel {
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+/* ─── Peak Hour Heatmap ─── */
+.heatmapGrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.heatCell {
+  aspect-ratio: 1;
+  width: 100%;
+  height: 40px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  transition: transform 0.2s;
+  cursor: default;
+}
+
+.heatCell:hover {
+  transform: scale(1.15);
+}
+
+.heatLabel {
+  font-size: 9px;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 3px;
+}
+
+.peakNote {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.peakHighlight {
+  color: var(--accent-orange);
+  font-weight: 600;
+}
+
+/* ─── Revenue vs Target (Gauge) ─── */
+.gaugeWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.gaugeSvgWrap {
+  position: relative;
+  width: 140px;
+  height: 70px;
+}
+
+.gaugePct {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--accent-orange);
+}
+
+.gaugeBar {
+  width: 100%;
+}
+
+.gaugeProgressTrack {
+  height: 6px;
+  background: var(--bg-primary);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.gaugeProgressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-orange), var(--accent-amber));
+  border-radius: 99px;
+  transition: width 1s ease;
+}
+
+.gaugeAmounts {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  text-align: center;
+  width: 100%;
+}
+
+.paymentSplit {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+}
+
+.paymentBox {
+  background: var(--bg-glass);
+  border-radius: 8px;
+  padding: 8px 10px;
+  text-align: center;
+}
+
+.paymentBoxLabel {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.paymentBoxValue {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ─── Today's Specials ─── */
+.specialsList {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.specialItem {
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1 1 180px;
+}
+
+.specialEmoji {
+  font-size: 30px;
+}
+
+.specialName {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.specialPrice {
+  color: var(--accent-orange);
+  font-weight: 700;
+  font-size: 14px;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+/* ─── Slow Movers ─── */
+.slowList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.slowItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--bg-glass);
+}
+
+.slowEmoji {
+  font-size: 20px;
+}
+
+.slowName {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.slowCount {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ─── Live Badges ─── */
+.headerBadges {
+  display: flex;
+  gap: 10px;
+}

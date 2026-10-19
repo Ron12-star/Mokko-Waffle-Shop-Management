@@ -1,0 +1,137 @@
+i want list of features in my shop management
+Tech stack : next for frontend and nest for backend and Mongodb for database(idk sql is fesible or not)
+              - Also add Socket.io for real time kitchen <-> counter sync (must have for live kanban board)
+              - Zustand for state management on frontend
+              - Twilio for WhatsApp notifications
+              - Puppeteer or @react-pdf/renderer for PDF receipts
+              - Recharts or Chart.js for dashboard analytics
+              - Cloudinary or AWS S3 for menu item images
+              - JWT or NextAuth for role based access
+
+i have total two screen 1) dashboard and that is present at billing counter
+                        2) whatever order comes in this screen and it will be present in kitchen far from billing counter
+
+- Dashboard
+    - Analytical chart of total sales of waffles and dessert
+    - Todays special menu
+    - Today's total sales
+    - Weekly sales analysis
+    - Monthly sales analysis
+    - Yearly sales analysis
+    - Peak Hour Heatmap - see which hours of the day are busiest (e.g. 6-8 PM)
+    - Best Selling Item Ranking - Top 5 items this week/month with trend arrows up/down
+    - Slow-moving Items - items with low sales (consider removing or promoting)
+    - Average Order Value (AOV) - track if AOV is going up or down
+    - Customer Retention Rate - % of customers who returned this month
+    - Revenue vs Target - set a monthly target and track progress with a gauge chart
+    - Comparison Mode - compare this week vs last week, this month vs last month
+
+    - by default best waffle come to another page
+    - after clicking on any waffle from the dashboard it will go to the another screen and kitchen staff can see order
+
+- Kitchen Screen
+    - kitchen screen have feature of kanban board
+    - counter screen can also check order on that screen
+    - it will show total waffle sold
+    - it will show total dessert sold
+    - kitchen screen is divided in 3 parts
+        1) incoming order
+        2) preparing order
+        3) ready to serve
+    - after preparing order they will drag and drop
+    - Order Priority Flag - counter can mark an order as "Urgent" - shows in red on kitchen screen
+    - Preparation Timer - each order card shows how long it has been in "Preparing"
+    - Item-level Completion - mark individual items done within a multi-item order
+    - Kitchen Notes - counter can add special notes (e.g. "Extra crispy, no syrup")
+    - Order History View - kitchen can see last 20 completed orders
+    - Multiple Kitchen Zones - separate lanes for Waffle station vs Dessert station
+    - New Order Sound - kitchen screen plays a chime when a new order arrives
+    - Long Waiting Order Alert - if order is in "Preparing" for more than 10 mins, flag it red
+    - Order Ready Alert - when kitchen marks "Ready to Serve", counter gets a sound + visual alert
+    - System-wide Announcements - counter can send a message to kitchen (e.g. "Rush hour, prioritize combos")
+
+- Counter / Billing Screen
+    - cart page is created to take name and phone number to collect customer details
+    - when payment is done then billing counter have button with selection of option of cash or upi
+    - order automatically goes to kitchen screen after payment
+    - when payment is done and order goes to kitchen screen then WhatsApp bill message will be forwarded with PDF of receipt and also message on messenger
+    - Split Bill - split payment between cash and UPI in one order
+    - Discount & Coupon Codes - apply % or flat discounts at checkout
+    - Tax Configuration - add GST/CGST shown in PDF receipt
+    - Quick Re-order - repeat last order for a returning customer with one click
+    - Bill on Hold - park a bill temporarily, continue with next customer
+    - Tip Addition - let counter staff add tip amount (for UPI orders)
+    - Refund Management - log and process refunds with reason tracking
+
+- Smart Menu Management
+    - Live Menu Toggle - enable/disable items instantly (e.g. "Nutella Waffle - sold out today")
+    - Category Management - Waffles, Desserts, Beverages, Combos with icons
+    - Item Customization Options - add toppings, sizes, sugar levels per item
+    - Combo / Bundle Builder - create combos (e.g. Waffle + Drink) with a special price
+    - Seasonal / Time-based Menu - show breakfast menu before 12pm, dessert menu after 6pm automatically
+    - Today's Special Scheduler - set tomorrow's special from today itself
+
+- Customer CRM & Loyalty
+    - Customer Profile - name, phone, order history, total spent, visit count
+    - Loyalty Points System - earn points per rupee spent, redeem on next order
+    - Customer Segmentation - tag customers: "Regular", "VIP", "New"
+    - Visit Streak Tracking - "You've visited 5 times! Here's a free topping"
+    - Favourite Orders - re-order a past favourite with one tap
+
+- Inventory & Stock Management
+    - Ingredient Tracking - track stock of flour, chocolate, cream, etc.
+    - Low Stock Alerts - push notification / WhatsApp alert when stock is low
+    - Auto-deduct on Order - when a waffle is sold, deduct its ingredients automatically
+    - Supplier Management - add suppliers, log purchases, track expenses
+    - Daily Wastage Log - record items wasted/expired each day
+    - Cost vs Revenue per Item - know profit margin per menu item
+
+- Staff Management
+    - Staff Profiles - name, role (Counter/Kitchen), shift timings
+    - Role-Based Access - kitchen staff only sees kitchen screen; admin sees everything
+    - Attendance Tracking - log check-in/check-out time
+    - Performance Stats - orders handled per staff member per day
+    - Shift Scheduling - weekly shift planner
+    - Sales by Staff - which counter staff generated the most revenue today
+
+- Customer-Facing Features
+    - Order Status Display - live order status board (like airport departures board)
+    - Digital Menu QR Code - customers scan and view the menu on their phone
+    - Online Pre-order - customers order ahead via link, arrive and pick up
+    - Feedback & Rating - after WhatsApp bill, send a feedback link (1-5 stars + comment)
+
+- Reports & Exports
+    - Daily Sales PDF Report - auto-generate and email to owner every night
+    - GST Report - monthly tax summary for accounting
+    - Export to Excel/CSV - sales, orders, inventory data
+    - Download All Orders in Excel Sheet - full order history with filters (by date range, payment type, item, customer) exportable as .xlsx file
+        - Columns: Order ID, Customer Name, Phone, Items Ordered, Total Amount, Payment Type (Cash/UPI), Order Date & Time, Status
+    - Print Kitchen Ticket - optional thermal printer support for kitchen orders
+    - Audit Log - full history of who did what and when (edits, deletions, discounts)
+    - Daily Summary Notification - end-of-day WhatsApp summary to owner
+
+- Settings & Configuration
+    - Shop Profile - name, logo, address, GSTIN (shown on receipts)
+    - Receipt Customization - custom message at bottom of receipt
+    - Working Hours - define open/close time, system auto-locks after closing time
+    - Currency & Tax Settings - configure tax rules
+    - Backup & Restore - daily automated MongoDB backup to cloud
+
+- Build Priority
+    Phase 1 (Core MVP)
+        - Menu Management
+        - Counter Cart + Customer Details
+        - Payment (Cash/UPI) + Kitchen Kanban
+        - WhatsApp Bill + PDF Receipt
+
+    Phase 2 (Growth)
+        - Customer CRM + Loyalty Points
+        - Inventory & Stock Alerts
+        - Advanced Analytics Dashboard
+        - Staff Roles & Access Control
+
+    Phase 3 (Premium)
+        - Online Pre-order
+        - Customer Feedback System
+        - Daily Reports & Email Summary
+        - Customer-Facing Order Status Display

@@ -1,0 +1,12 @@
+import { Module } from '@nestjs/common';
+import { ReceiptService } from './receipt.service';
+import { ReceiptController } from './receipt.controller';
+import { WhatsAppModule } from '../whatsapp/whatsapp.module';
+
+@Module({
+  imports: [WhatsAppModule],
+  controllers: [ReceiptController],
+  providers: [ReceiptService],
+  exports: [ReceiptService],
+})
+export class ReceiptModule {}
