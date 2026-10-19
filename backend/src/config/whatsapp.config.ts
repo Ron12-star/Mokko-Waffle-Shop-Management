@@ -28,6 +28,12 @@ export const WHATSAPP_CONFIG = {
   // 📞 YOUR BUSINESS WHATSAPP NUMBER (for display on receipts)
   // ──────────────────────────────────────────────
   BUSINESS_WHATSAPP: process.env.BUSINESS_WHATSAPP || '+91 98765 43210',
+
+  // ──────────────────────────────────────────────
+  // 👑 SHOP OWNER WHATSAPP (Optional: Receive copy of all receipts)
+  // ──────────────────────────────────────────────
+  OWNER_WHATSAPP: process.env.OWNER_WHATSAPP || '',
+  SEND_OWNER_COPY: process.env.SEND_OWNER_COPY === 'true' || false,
 };
 
 // ╔══════════════════════════════════════════════════════════════════════╗

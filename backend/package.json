@@ -13,9 +13,12 @@
   "dependencies": {
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",
+    "@nestjs/mongoose": "^11.0.4",
     "@nestjs/platform-express": "^11.0.0",
     "@nestjs/platform-socket.io": "^11.2.7",
     "@nestjs/websockets": "^11.2.7",
+    "dotenv": "^18.0.8",
+    "mongoose": "^9.11.2",
     "puppeteer": "^24.0.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",

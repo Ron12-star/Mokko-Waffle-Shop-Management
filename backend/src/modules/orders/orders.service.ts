@@ -1,13 +1,17 @@
-import { Injectable, Logger, BadRequestException } from '@nestjs/common';
+import { Injectable, Logger, BadRequestException, Optional } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import { ShopOrder } from '../../types/order.types';
 import { ReceiptService } from '../receipt/receipt.service';
 import { WhatsAppService } from '../whatsapp/whatsapp.service';
+import { WHATSAPP_CONFIG } from '../../config/whatsapp.config';
+import { Order, OrderDocument } from './schemas/order.schema';
 
 @Injectable()
 export class OrdersService {
   private readonly logger = new Logger(OrdersService.name);
 
-  // In-memory active order store (can easily be connected to MongoDB)
+  // In-memory active order store (used as fallback or when MongoDB is not connected)
   private orders: ShopOrder[] = [
     {
       id: 'ORD-101',
@@ -86,9 +90,26 @@ export class OrdersService {
   constructor(
     private readonly receiptService: ReceiptService,
     private readonly whatsAppService: WhatsAppService,
-  ) {}
+    @Optional() @InjectModel(Order.name) private readonly orderModel?: Model<OrderDocument>,
+  ) {
+    if (this.orderModel) {
+      this.logger.log('🍃 MongoDB connected! Orders will persist to MongoDB collection.');
+    } else {
+      this.logger.log('📦 In-memory orders store active (MongoDB not configured).');
+    }
+  }
 
-  getAllOrders(): ShopOrder[] {
+  async getAllOrders(): Promise<ShopOrder[]> {
+    if (this.orderModel) {
+      try {
+        const dbOrders = await this.orderModel.find().sort({ createdAt: -1 }).lean().exec();
+        if (dbOrders && dbOrders.length > 0) {
+          return dbOrders as any;
+        }
+      } catch (err: any) {
+        this.logger.warn(`MongoDB read failed: ${err.message}, falling back to memory store`);
+      }
+    }
     return this.orders;
   }
 
@@ -145,8 +166,19 @@ export class OrdersService {
       timer: 0,
     };
 
-    // Prepend to active orders
+    // Prepend to active memory orders
     this.orders.unshift(newOrder);
+
+    // Save to MongoDB if connected
+    if (this.orderModel) {
+      try {
+        await new this.orderModel(newOrder).save();
+        this.logger.log(`🍃 Order persisted to MongoDB: ${newOrder.id}`);
+      } catch (dbErr: any) {
+        this.logger.warn(`Failed to save order to MongoDB: ${dbErr.message}`);
+      }
+    }
+
     this.logger.log(`🍳 New order placed: ${newOrder.id} (${newOrder.billNo}) for ${newOrder.customer.name}`);
 
     // Generate PDF & Send WhatsApp in background
@@ -179,6 +211,16 @@ export class OrdersService {
         pdfPath,
       );
       whatsappSent = waRes.success;
+
+      // Optional: Send a copy to the shop owner/manager WhatsApp
+      if (WHATSAPP_CONFIG.OWNER_WHATSAPP && WHATSAPP_CONFIG.SEND_OWNER_COPY) {
+        await this.whatsAppService.sendReceipt(
+          WHATSAPP_CONFIG.OWNER_WHATSAPP,
+          `Shop Owner (Order by ${newOrder.customer.name})`,
+          newOrder.summary.total,
+          pdfPath,
+        );
+      }
     } catch (e: any) {
       this.logger.error(`Receipt / WhatsApp background process failed: ${e.message}`);
     }
@@ -193,6 +235,14 @@ export class OrdersService {
     }
 
     order.status = status;
+
+    // Update in MongoDB if connected
+    if (this.orderModel) {
+      this.orderModel.updateOne({ id: orderId }, { $set: { status } }).catch((err) => {
+        this.logger.warn(`MongoDB status update failed: ${err.message}`);
+      });
+    }
+
     this.logger.log(`🔄 Order ${orderId} status changed to ${status}`);
     return order;
   }
