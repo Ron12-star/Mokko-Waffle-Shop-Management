@@ -15,7 +15,7 @@ export class ReceiptService {
   private readonly logger = new Logger(ReceiptService.name);
 
   // Counter for bill numbers
-  private billCounter = 124;
+  private billCounter = 0;
 
   /**
    * Generate the next bill number
@@ -85,7 +85,11 @@ export class ReceiptService {
       return pdfPath;
     } catch (error: any) {
       this.logger.error(`❌ PDF generation failed: ${error?.message || error}`);
-      throw error;
+      const sanitizedBillNo = order.billNo.replace(/[^a-zA-Z0-9-]/g, '_');
+      const fallbackPath = path.join(receiptsDir, `receipt_${sanitizedBillNo}.html`);
+      fs.writeFileSync(fallbackPath, html, 'utf8');
+      this.logger.log(`📄 Saved fallback HTML receipt at: ${fallbackPath}`);
+      return fallbackPath;
     } finally {
       if (browser) {
         try {

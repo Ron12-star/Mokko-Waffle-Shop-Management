@@ -21,14 +21,15 @@ const manageItems = [
   { label: "Settings", href: "/settings", icon: Settings },
 ];
 
+import MokkoLogo from "./MokkoLogo";
+
 export default function Sidebar() {
   const pathname = usePathname();
 
   return (
     <aside className="sidebar">
       <div className="sidebar-logo">
-        <div className="logo-text">MOKKO</div>
-        <div className="logo-sub">Waffles &amp; Desserts</div>
+        <MokkoLogo size="md" />
       </div>
 
       <nav>

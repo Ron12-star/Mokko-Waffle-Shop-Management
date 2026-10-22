@@ -10,36 +10,36 @@ export const SHOP_CONFIG = {
   // 🏪 SHOP DETAILS (shown on receipt header)
   // ──────────────────────────────────────────────
   name: 'MOKKO',
-  tagline: 'Fresh Waffles • Happy Moods',
-  fullName: 'Mokko Waffles & Desserts',
+  tagline: 'Desserts & Coffee',
+  fullName: 'MOKKO Desserts & Coffee',
 
   // ──────────────────────────────────────────────
   // 📍 ADDRESS (shown on receipt)
   // ──────────────────────────────────────────────
-  addressLine1: 'Shop No. 12, Green Park, Main Road',
-  addressLine2: 'Pune - 411016, Maharashtra',
-  phone: '+91 98765 43210',
+  addressLine1: '',
+  addressLine2: '',
+  phone: '+91 9316707935',
 
   // ──────────────────────────────────────────────
   // 💰 TAX CONFIGURATION
   // ──────────────────────────────────────────────
-  gstRate: 0.05,       // 5% GST
-  gstLabel: 'GST (5%)',
-  gstin: '27AABCU9603R1ZX',
+  gstRate: 0,          // GST removed
+  gstLabel: 'GST',
+  gstin: '',
 
   // ──────────────────────────────────────────────
   // 🧾 RECEIPT SETTINGS
   // ──────────────────────────────────────────────
   receiptPrefix: 'MK',  // Bill numbers: MK-000124
-  footerMessage: 'Thank you for visiting! ♡',
-  footerTagline: 'Good Food  •  Good Vibes  •  See You Soon!',
+  footerMessage: 'Thank you for visiting MOKKO! ♡',
+  footerTagline: 'Desserts & Coffee  •  Good Vibes  •  See You Soon!',
   footerNote: 'This is a computer generated receipt',
 
   // ──────────────────────────────────────────────
-  // 🎨 RECEIPT BRANDING COLORS
+  // 🎨 RECEIPT BRANDING COLORS (MOKKO Logo Palette)
   // ──────────────────────────────────────────────
-  primaryColor: '#2d2d2d',
-  accentColor: '#e8783a',
+  primaryColor: '#4a2311',
+  accentColor: '#d47a2a',
 };
 
 // ╔══════════════════════════════════════════════════════════════════════╗

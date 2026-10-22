@@ -1,6 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import MokkoLogo from "@/components/MokkoLogo";
 
 export default function Home() {
   const router = useRouter();
@@ -28,29 +29,17 @@ export default function Home() {
     <div
       style={{
         minHeight: "100vh",
-        background: "#0d0d0f",
+        background: "radial-gradient(ellipse at top, #2b160b 0%, #150a05 70%, #0a0402 100%)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         flexDirection: "column",
-        gap: 16,
+        gap: 20,
       }}
     >
-      <div style={{ fontSize: 60 }}>🧇</div>
-      <div
-        style={{
-          fontFamily: "Space Grotesk",
-          fontSize: 32,
-          fontWeight: 800,
-          background: "linear-gradient(135deg,#ff6b35,#f59e0b)",
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-        }}
-      >
-        MOKKO
-      </div>
-      <div style={{ color: "rgba(255,255,255,0.5)", fontSize: 14 }}>
-        Connecting to terminal...
+      <MokkoLogo size="xl" />
+      <div style={{ color: "var(--text-secondary)", fontSize: 14, letterSpacing: "1px" }}>
+        Connecting to MOKKO Terminal...
       </div>
     </div>
   );

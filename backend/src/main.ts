@@ -1,6 +1,14 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 
+import * as dns from 'dns';
+try {
+  // Fix for Windows / ISP DNS blocking MongoDB Atlas SRV querySrv
+  dns.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
+} catch (e) {
+  // ignore if restricted
+}
+
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger } from '@nestjs/common';

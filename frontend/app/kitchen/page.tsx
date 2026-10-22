@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
-import { kanbanOrders } from "@/lib/mockData";
+import { api } from "@/lib/api";
 import {
   Bell,
   ChefHat,
@@ -194,7 +194,11 @@ function OrderCard({
 export default function KitchenPage() {
   const { showInfo, showSuccess } = useToast();
 
-  const [orders, setOrders] = useState<Record<Column, Order[]>>(kanbanOrders as any);
+  const [orders, setOrders] = useState<Record<Column, Order[]>>({
+    incoming: [],
+    preparing: [],
+    ready: [],
+  });
   const [announcement, setAnnouncement] = useState("");
   const [announcementText, setAnnouncementText] = useState("");
   const [activeZone, setActiveZone] = useState<"all" | "waffle" | "dessert">("all");
@@ -288,8 +292,7 @@ export default function KitchenPage() {
     setupSocket();
 
     // Also fetch initial orders via REST as backup
-    fetch("http://localhost:4000/api/orders")
-      .then((res) => res.json())
+    api.getOrders()
       .then((data) => {
         if (data.success && Array.isArray(data.orders)) {
           const categorized: Record<Column, Order[]> = {

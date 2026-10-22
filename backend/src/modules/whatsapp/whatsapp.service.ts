@@ -1,173 +1,258 @@
 // ╔══════════════════════════════════════════════════════════════════════╗
-// ║  📱 WHATSAPP SERVICE — Sends receipts via Twilio WhatsApp API     ║
+// ║  📱 WHATSAPP SERVICE — Powered by Meta WhatsApp Cloud API (Free)    ║
+// ║  Direct Meta Graph API integration with automatic fallback link.    ║
 // ╚══════════════════════════════════════════════════════════════════════╝
 
 import { Injectable, Logger } from '@nestjs/common';
-import twilio from 'twilio';
 import { WHATSAPP_CONFIG, getWhatsAppMessage } from '../../config/whatsapp.config';
 import { SHOP_CONFIG } from '../../config/shop.config';
 
 @Injectable()
 export class WhatsAppService {
   private readonly logger = new Logger(WhatsAppService.name);
-  private client: twilio.Twilio | null = null;
-  private isConfigured = false;
+  private isMetaConfigured = false;
 
   constructor() {
-    this.initTwilioClient();
+    this.checkConfig();
   }
 
-  private initTwilioClient() {
-    const { TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN } = WHATSAPP_CONFIG;
+  private checkConfig() {
+    const { META_WA_PHONE_NUMBER_ID, META_WA_ACCESS_TOKEN } = WHATSAPP_CONFIG;
     if (
-      TWILIO_ACCOUNT_SID &&
-      TWILIO_ACCOUNT_SID !== 'YOUR_TWILIO_ACCOUNT_SID_HERE' &&
-      TWILIO_AUTH_TOKEN &&
-      TWILIO_AUTH_TOKEN !== 'YOUR_TWILIO_AUTH_TOKEN_HERE'
+      META_WA_PHONE_NUMBER_ID &&
+      META_WA_PHONE_NUMBER_ID.trim() !== '' &&
+      META_WA_ACCESS_TOKEN &&
+      META_WA_ACCESS_TOKEN.trim() !== ''
     ) {
-      try {
-        this.client = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
-        this.isConfigured = true;
-        this.logger.log('✅ Twilio WhatsApp client initialized successfully');
-      } catch (err: any) {
-        this.logger.error(`❌ Failed to initialize Twilio client: ${err?.message || err}`);
-        this.client = null;
-        this.isConfigured = false;
-      }
+      this.isMetaConfigured = true;
+      this.logger.log('✅ Meta WhatsApp Cloud API is configured and ready! (1,000 Free msgs/mo)');
     } else {
       this.logger.warn(
-        '⚠️ Twilio credentials are not set (placeholder detected). Running in simulation/mock mode for development.',
+        '⚠️ Meta WhatsApp Cloud API credentials are not set in .env. Messages will use direct WhatsApp Click-to-Chat & simulator mode.',
       );
-      this.isConfigured = false;
+      this.isMetaConfigured = false;
     }
   }
 
   /**
-   * Send a WhatsApp message with PDF receipt to customer
-   *
-   * @param customerPhone - Customer's phone number (e.g. "9876543210")
-   * @param customerName  - Customer's name for the heartwarming message
-   * @param totalAmount   - Order total for the message
-   * @param pdfPath       - Absolute path or public URL of the generated PDF
+   * Format full itemized receipt for WhatsApp message body
+   */
+  formatReceiptText(order: any): string {
+    const itemsText = (order.items || [])
+      .map(
+        (it: any) =>
+          `• ${it.name} × ${it.qty} = ₹${it.price * it.qty}`,
+      )
+      .join('\n');
+
+    const discountText =
+      order.summary?.discountAmount > 0
+        ? `\n🎟️ *Discount:* -₹${order.summary.discountAmount} ${
+            order.summary.discountCode ? `(${order.summary.discountCode})` : ''
+          }`
+        : '';
+
+    return (
+      `🧇 *${SHOP_CONFIG.fullName}* ☕\n` +
+      `_${SHOP_CONFIG.tagline}_\n` +
+      `📞 ${SHOP_CONFIG.phone}\n` +
+      `──────────────────────────\n` +
+      `🧾 *Bill No:* ${order.billNo || 'MK-0001'}\n` +
+      `📅 *Date & Time:* ${order.time || new Date().toLocaleTimeString('en-IN')}\n` +
+      `👤 *Customer:* ${order.customer?.name || 'Valued Customer'}\n` +
+      `📱 *Phone:* +91 ${order.customer?.phone || ''}\n` +
+      `💳 *Payment Method:* ${(order.paymentMethod || 'CASH').toUpperCase()}\n` +
+      `──────────────────────────\n` +
+      `*ORDERED ITEMS:*\n` +
+      `${itemsText}\n` +
+      `──────────────────────────\n` +
+      `Subtotal: ₹${order.summary?.subtotal || 0}` +
+      `${discountText}\n` +
+      `*💰 GRAND TOTAL: ₹${order.summary?.discountAmount ? ((order.summary?.subtotal || 0) - order.summary.discountAmount) : (order.summary?.total || order.summary?.subtotal || 0)}*\n` +
+      `──────────────────────────\n` +
+      `♡ ${SHOP_CONFIG.footerMessage}\n` +
+      `_See you soon for more sweetness!_ ✨`
+    );
+  }
+
+  /**
+   * Send WhatsApp message using Meta WhatsApp Cloud API
+   */
+  private async sendMetaCloudMessage(
+    recipientPhone: string,
+    messageText: string,
+    mediaUrl?: string,
+  ): Promise<{ success: boolean; messageId?: string; error?: string }> {
+    const cleanDigits = recipientPhone.replace(/\D/g, '');
+    const to = cleanDigits.length === 10 ? `91${cleanDigits}` : cleanDigits;
+
+    const endpoint = `https://graph.facebook.com/${WHATSAPP_CONFIG.META_WA_API_VERSION}/${WHATSAPP_CONFIG.META_WA_PHONE_NUMBER_ID}/messages`;
+
+    // Prepare Meta Cloud API JSON payload
+    let payload: any = {
+      messaging_product: 'whatsapp',
+      recipient_type: 'individual',
+      to,
+      type: 'text',
+      text: {
+        preview_url: false,
+        body: messageText,
+      },
+    };
+
+    // If mediaUrl is a public web link, send as document
+    if (mediaUrl && (mediaUrl.startsWith('http://') || mediaUrl.startsWith('https://'))) {
+      payload = {
+        messaging_product: 'whatsapp',
+        recipient_type: 'individual',
+        to,
+        type: 'document',
+        document: {
+          link: mediaUrl,
+          caption: messageText.slice(0, 500),
+          filename: 'MOKKO_Receipt.pdf',
+        },
+      };
+    }
+
+    try {
+      this.logger.log(`📱 Calling Meta WhatsApp Cloud API for: +${to}`);
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${WHATSAPP_CONFIG.META_WA_ACCESS_TOKEN}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        const errorMsg = data.error?.message || `Meta Cloud API failed with status ${response.status}`;
+        this.logger.error(`❌ Meta WhatsApp Cloud API Error: ${errorMsg}`);
+        return { success: false, error: errorMsg };
+      }
+
+      const messageId = data.messages?.[0]?.id || `meta_${Date.now()}`;
+      this.logger.log(`✅ Meta WhatsApp message dispatched successfully! ID: ${messageId}`);
+      return { success: true, messageId };
+    } catch (err: any) {
+      this.logger.error(`❌ Network error calling Meta Cloud API: ${err.message}`);
+      return { success: false, error: err.message };
+    }
+  }
+
+  /**
+   * Send Order Receipt (Meta Cloud API + Direct WhatsApp Link)
    */
   async sendReceipt(
     customerPhone: string,
     customerName: string,
     totalAmount: number,
     pdfPath?: string,
-  ): Promise<{ success: boolean; messageId?: string; error?: string; simulated?: boolean }> {
-    try {
-      const formattedPhone = this.formatPhoneNumber(customerPhone);
-      const whatsappTo = `whatsapp:${formattedPhone}`;
+    orderData?: any,
+  ): Promise<{ success: boolean; messageId?: string; error?: string; waLink?: string; simulated?: boolean }> {
+    const cleanDigits = customerPhone.replace(/\D/g, '').slice(-10);
 
-      this.logger.log(`📱 Sending WhatsApp receipt to ${whatsappTo}`);
+    // Format full itemized message
+    const messageBody = orderData
+      ? this.formatReceiptText(orderData)
+      : getWhatsAppMessage(customerName, totalAmount, SHOP_CONFIG.fullName);
 
-      // Get random heartwarming message
-      const messageBody = getWhatsAppMessage(
-        customerName,
-        totalAmount,
-        SHOP_CONFIG.fullName,
-      );
+    // Always generate instant direct WhatsApp Click-to-Chat link
+    const waLink = `https://api.whatsapp.com/send?phone=91${cleanDigits}&text=${encodeURIComponent(messageBody)}`;
 
-      // If running without real Twilio credentials, simulate success
-      if (!this.isConfigured || !this.client) {
-        const mockSid = `mock_msg_${Date.now()}`;
-        this.logger.log(`[SIMULATED] WhatsApp sent to ${whatsappTo}: ${messageBody.slice(0, 50)}...`);
-        return {
-          success: true,
-          messageId: mockSid,
-          simulated: true,
-        };
-      }
-
-      // Prepare message payload
-      const messagePayload: any = {
-        from: WHATSAPP_CONFIG.TWILIO_WHATSAPP_NUMBER,
-        to: whatsappTo,
-        body: messageBody,
-      };
-
-      // Only add mediaUrl if it's a valid public HTTP(S) URL
-      if (pdfPath && (pdfPath.startsWith('http://') || pdfPath.startsWith('https://'))) {
-        messagePayload.mediaUrl = [pdfPath];
-      }
-
-      const message = await this.client.messages.create(messagePayload);
-      this.logger.log(`✅ WhatsApp sent! Message SID: ${message.sid}`);
-
+    // If Meta Cloud API is configured, send directly via Meta Graph API
+    if (this.isMetaConfigured) {
+      const metaResult = await this.sendMetaCloudMessage(cleanDigits, messageBody, pdfPath);
       return {
-        success: true,
-        messageId: message.sid,
-      };
-    } catch (error: any) {
-      this.logger.error(`❌ WhatsApp send failed: ${error?.message || error}`);
-      return {
-        success: false,
-        error: error?.message || 'Failed to send WhatsApp message',
+        success: metaResult.success,
+        messageId: metaResult.messageId,
+        error: metaResult.error,
+        waLink,
       };
     }
+
+    // Otherwise simulation mode with instant 1-click WhatsApp link
+    this.logger.log(`[DEV/FALLBACK] WhatsApp receipt link prepared for +91 ${cleanDigits}`);
+    return {
+      success: true,
+      messageId: `sim_${Date.now()}`,
+      waLink,
+      simulated: true,
+    };
   }
 
   /**
-   * Send a WhatsApp message with a hosted PDF URL
+   * Send OTP via WhatsApp directly to Store Admin / Owner
    */
-  async sendReceiptWithUrl(
-    customerPhone: string,
-    customerName: string,
-    totalAmount: number,
-    pdfUrl: string,
-  ): Promise<{ success: boolean; messageId?: string; error?: string; simulated?: boolean }> {
-    return this.sendReceipt(customerPhone, customerName, totalAmount, pdfUrl);
+  async sendOtpWhatsApp(
+    adminPhone: string,
+    otp: string,
+    role: string,
+    staffIdentifier?: string,
+  ): Promise<{ success: boolean; messageId?: string; waLink: string; error?: string; simulated?: boolean }> {
+    const cleanAdminDigits = adminPhone.replace(/\D/g, '').slice(-10);
+    const cleanStaffDigits = staffIdentifier ? staffIdentifier.replace(/\D/g, '').slice(-10) : '';
+
+    const roleTitle =
+      role === 'counter'
+        ? 'Billing Counter Station'
+        : role === 'kitchen'
+        ? 'Kitchen Display Station'
+        : 'Store Administration';
+
+    const messageBody =
+      `🧇 *${SHOP_CONFIG.fullName}* ☕\n` +
+      `🔐 *STAFF TERMINAL LOGIN AUTHORIZATION*\n` +
+      `──────────────────────────\n` +
+      `A login attempt was initiated on the store terminal:\n` +
+      `• *Terminal Station:* ${roleTitle}\n` +
+      `• *Staff ID / Phone:* ${cleanStaffDigits ? `+91 ${cleanStaffDigits}` : 'Counter Staff'}\n` +
+      `• *Timestamp:* ${new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}\n\n` +
+      `👉 *ONE-TIME APPROVAL OTP: ${otp}*\n` +
+      `──────────────────────────\n` +
+      `⚠️ Share this 6-digit code only with authorized staff currently on duty.\n` +
+      `⏰ Valid for 5 minutes.`;
+
+    const waLink = `https://api.whatsapp.com/send?phone=91${cleanAdminDigits}&text=${encodeURIComponent(messageBody)}`;
+
+    if (this.isMetaConfigured) {
+      this.logger.log(`📱 Sending Login Approval OTP to Admin Phone: +91 ${cleanAdminDigits}`);
+      const metaResult = await this.sendMetaCloudMessage(cleanAdminDigits, messageBody);
+      return {
+        success: metaResult.success,
+        messageId: metaResult.messageId,
+        error: metaResult.error,
+        waLink,
+      };
+    }
+
+    this.logger.log(`[DEV/FALLBACK] WhatsApp OTP code ${otp} generated for Admin +91 ${cleanAdminDigits}`);
+    return {
+      success: true,
+      messageId: `sim_otp_${Date.now()}`,
+      waLink,
+      simulated: true,
+    };
   }
 
   /**
-   * Send a simple text-only WhatsApp message
+   * Send generic text message via WhatsApp
    */
   async sendTextMessage(
     phone: string,
     message: string,
-  ): Promise<{ success: boolean; messageId?: string; error?: string; simulated?: boolean }> {
-    try {
-      const formattedPhone = this.formatPhoneNumber(phone);
-      const whatsappTo = `whatsapp:${formattedPhone}`;
+  ): Promise<{ success: boolean; messageId?: string; error?: string; waLink?: string; simulated?: boolean }> {
+    const cleanDigits = phone.replace(/\D/g, '').slice(-10);
+    const waLink = `https://api.whatsapp.com/send?phone=91${cleanDigits}&text=${encodeURIComponent(message)}`;
 
-      if (!this.isConfigured || !this.client) {
-        const mockSid = `mock_text_${Date.now()}`;
-        this.logger.log(`[SIMULATED] WhatsApp text sent to ${whatsappTo}: ${message}`);
-        return { success: true, messageId: mockSid, simulated: true };
-      }
-
-      const msg = await this.client.messages.create({
-        from: WHATSAPP_CONFIG.TWILIO_WHATSAPP_NUMBER,
-        to: whatsappTo,
-        body: message,
-      });
-
-      return { success: true, messageId: msg.sid };
-    } catch (error: any) {
-      this.logger.error(`❌ Text message failed: ${error?.message || error}`);
-      return { success: false, error: error?.message || 'Failed to send text' };
-    }
-  }
-
-  /**
-   * Format phone number with Indian country code
-   */
-  private formatPhoneNumber(phone: string): string {
-    const digits = phone.replace(/\D/g, '');
-
-    if (digits.startsWith('91') && digits.length === 12) {
-      return `+${digits}`;
+    if (this.isMetaConfigured) {
+      const metaResult = await this.sendMetaCloudMessage(cleanDigits, message);
+      return { ...metaResult, waLink };
     }
 
-    if (digits.length === 10) {
-      return `+91${digits}`;
-    }
-
-    if (phone.startsWith('+')) {
-      return phone;
-    }
-
-    return `+91${digits}`;
+    return { success: true, messageId: `sim_${Date.now()}`, waLink, simulated: true };
   }
 }

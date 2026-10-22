@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 * {
   margin: 0;
@@ -7,21 +7,29 @@
 }
 
 :root {
-  --bg-primary: #0a0a0f;
-  --bg-secondary: #111118;
-  --bg-card: #16161f;
-  --bg-card-hover: #1c1c28;
-  --bg-glass: rgba(255, 255, 255, 0.04);
-  --border: rgba(255, 255, 255, 0.08);
-  --border-hover: rgba(255, 255, 255, 0.15);
+  /* 🍫 MOKKO Artisanal Chocolate & Cream Palette (Derived from MOKKO Logo) */
+  --bg-primary: #150a05;
+  --bg-secondary: #1e1008;
+  --bg-card: #27160d;
+  --bg-card-hover: #331d12;
+  --bg-glass: rgba(246, 237, 226, 0.05);
+  --border: rgba(246, 237, 226, 0.1);
+  --border-hover: rgba(212, 122, 42, 0.45);
 
-  --accent-orange: #ff6b35;
-  --accent-orange-light: #ff8c5a;
-  --accent-orange-glow: rgba(255, 107, 53, 0.2);
-  --accent-amber: #f59e0b;
-  --accent-amber-glow: rgba(245, 158, 11, 0.2);
-  --accent-purple: #8b5cf6;
-  --accent-purple-glow: rgba(139, 92, 246, 0.2);
+  --brand-choco: #4a2311;
+  --brand-choco-dark: #361709;
+  --brand-choco-light: #61311b;
+  --brand-cream: #f7ede2;
+  --brand-cream-fill: #faede1;
+  --brand-biscuit: #ebd7c2;
+
+  --accent-orange: #d47a2a; /* Warm Toffee Caramel */
+  --accent-orange-light: #e88f42;
+  --accent-orange-glow: rgba(212, 122, 42, 0.25);
+  --accent-amber: #e5973c;
+  --accent-amber-glow: rgba(229, 151, 60, 0.2);
+  --accent-purple: #9d68db;
+  --accent-purple-glow: rgba(157, 104, 219, 0.2);
   --accent-green: #10b981;
   --accent-green-glow: rgba(16, 185, 129, 0.2);
   --accent-red: #ef4444;
@@ -29,9 +37,9 @@
   --accent-blue: #3b82f6;
   --accent-blue-glow: rgba(59, 130, 246, 0.2);
 
-  --text-primary: #f1f1f5;
-  --text-secondary: #9898a8;
-  --text-muted: #5a5a6e;
+  --text-primary: #faf2ea;
+  --text-secondary: #c9b4a1;
+  --text-muted: #8c7362;
 
   --sidebar-width: 240px;
   --header-height: 64px;
@@ -41,15 +49,15 @@
   --radius-lg: 16px;
   --radius-xl: 24px;
 
-  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
-  --shadow-glow-orange: 0 0 40px rgba(255, 107, 53, 0.15);
+  --shadow-card: 0 4px 24px rgba(10, 4, 2, 0.5);
+  --shadow-glow-orange: 0 0 35px rgba(212, 122, 42, 0.2);
 }
 
 html, body {
   height: 100%;
   background: var(--bg-primary);
   color: var(--text-primary);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 14px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -58,8 +66,8 @@ html, body {
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 999px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+::-webkit-scrollbar-thumb { background: rgba(246, 237, 226, 0.15); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(212, 122, 42, 0.4); }
 
 /* Layout */
 .app-layout {
@@ -95,27 +103,36 @@ html, body {
 }
 
 .sidebar-logo {
-  padding: 0 20px 24px;
+  padding: 0 16px 20px;
   border-bottom: 1px solid var(--border);
   margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .sidebar-logo .logo-text {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 24px;
+  font-family: 'Fredoka', cursive, sans-serif;
+  font-size: 26px;
   font-weight: 700;
-  background: linear-gradient(135deg, var(--accent-orange), var(--accent-amber));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  letter-spacing: -0.5px;
+  color: #faede1;
+  text-shadow:
+    -2px -2px 0 #4a2311,
+     2px -2px 0 #4a2311,
+    -2px  2px 0 #4a2311,
+     2px  2px 0 #4a2311;
+  letter-spacing: 1px;
 }
 
 .sidebar-logo .logo-sub {
-  font-size: 11px;
-  color: var(--text-muted);
-  margin-top: 2px;
-  letter-spacing: 0.5px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 9.5px;
+  font-weight: 800;
+  color: var(--accent-orange);
+  margin-top: 3px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
 }
 
 .nav-section-title {

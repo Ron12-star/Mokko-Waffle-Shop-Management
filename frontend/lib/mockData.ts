@@ -33,33 +33,33 @@ export const menuItems = [
 ];
 
 export const todayStats = {
-  totalSales: 18420,
-  totalOrders: 67,
-  wafflesSold: 89,
-  dessertsSold: 43,
-  beveragesSold: 54,
-  aov: 275,
-  cashSales: 10200,
-  upiSales: 8220,
+  totalSales: 0,
+  totalOrders: 0,
+  wafflesSold: 0,
+  dessertsSold: 0,
+  beveragesSold: 0,
+  aov: 0,
+  cashSales: 0,
+  upiSales: 0,
 };
 
 export const weeklySales = [
-  { day: "Mon", sales: 12400, orders: 45, waffles: 56, desserts: 28 },
-  { day: "Tue", sales: 15800, orders: 58, waffles: 72, desserts: 35 },
-  { day: "Wed", sales: 11200, orders: 41, waffles: 48, desserts: 21 },
-  { day: "Thu", sales: 16900, orders: 61, waffles: 78, desserts: 40 },
-  { day: "Fri", sales: 22300, orders: 82, waffles: 102, desserts: 55 },
-  { day: "Sat", sales: 28700, orders: 105, waffles: 134, desserts: 72 },
-  { day: "Sun", sales: 18420, orders: 67, waffles: 89, desserts: 43 },
+  { day: "Mon", sales: 0, orders: 0, waffles: 0, desserts: 0 },
+  { day: "Tue", sales: 0, orders: 0, waffles: 0, desserts: 0 },
+  { day: "Wed", sales: 0, orders: 0, waffles: 0, desserts: 0 },
+  { day: "Thu", sales: 0, orders: 0, waffles: 0, desserts: 0 },
+  { day: "Fri", sales: 0, orders: 0, waffles: 0, desserts: 0 },
+  { day: "Sat", sales: 0, orders: 0, waffles: 0, desserts: 0 },
+  { day: "Sun", sales: 0, orders: 0, waffles: 0, desserts: 0 },
 ];
 
 export const monthlySales = [
-  { month: "Jan", sales: 285000 }, { month: "Feb", sales: 312000 },
-  { month: "Mar", sales: 298000 }, { month: "Apr", sales: 340000 },
-  { month: "May", sales: 325000 }, { month: "Jun", sales: 358000 },
-  { month: "Jul", sales: 382000 }, { month: "Aug", sales: 371000 },
-  { month: "Sep", sales: 395000 }, { month: "Oct", sales: 412000 },
-  { month: "Nov", sales: 0 },     { month: "Dec", sales: 0 },
+  { month: "Jan", sales: 0 }, { month: "Feb", sales: 0 },
+  { month: "Mar", sales: 0 }, { month: "Apr", sales: 0 },
+  { month: "May", sales: 0 }, { month: "Jun", sales: 0 },
+  { month: "Jul", sales: 0 }, { month: "Aug", sales: 0 },
+  { month: "Sep", sales: 0 }, { month: "Oct", sales: 0 },
+  { month: "Nov", sales: 0 }, { month: "Dec", sales: 0 },
 ];
 
 export const peakHourData = [

@@ -286,10 +286,6 @@ export function generateReceiptHTML(order: SendReceiptRequest): string {
     <div class="logo-emoji">🧇</div>
     <div class="shop-name">${shop.name}</div>
     <div class="shop-tagline">${shop.tagline}</div>
-    <div class="shop-address">
-      ${shop.addressLine1}<br>
-      ${shop.addressLine2}
-    </div>
     <div class="shop-phone">📞 ${shop.phone}</div>
   </div>
 
@@ -301,6 +297,11 @@ export function generateReceiptHTML(order: SendReceiptRequest): string {
       <span class="bill-info-label">Bill No</span>
       <span class="bill-info-sep">:</span>
       <span class="bill-info-value">${order.billNo}</span>
+    </div>
+    <div class="bill-info-row">
+      <span class="bill-info-label">Customer Name</span>
+      <span class="bill-info-sep">:</span>
+      <span class="bill-info-value">${order.customer?.name || 'Walk-in Customer'}</span>
     </div>
     <div class="bill-info-row">
       <span class="bill-info-label">Date & Time</span>
@@ -354,16 +355,12 @@ export function generateReceiptHTML(order: SendReceiptRequest): string {
     </div>`
         : ''
     }
-    <div class="summary-row">
-      <span class="summary-label">${shop.gstLabel}</span>
-      <span class="summary-value">₹${order.summary.gstAmount}</span>
-    </div>
   </div>
 
   <!-- Total -->
   <div class="total-row">
     <span>Total</span>
-    <span class="total-value">₹${order.summary.total}</span>
+    <span class="total-value">₹${order.summary.discountAmount > 0 ? (order.summary.subtotal - order.summary.discountAmount) : (order.summary.total != null && (!order.summary.gstAmount || order.summary.gstAmount === 0) ? order.summary.total : order.summary.subtotal)}</span>
   </div>
 
   <!-- Payment Info -->

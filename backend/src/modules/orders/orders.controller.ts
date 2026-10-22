@@ -23,10 +23,10 @@ export class OrdersController {
   ) {}
 
   @Get()
-  getAllOrders() {
+  async getAllOrders() {
     return {
       success: true,
-      orders: this.ordersService.getAllOrders(),
+      orders: await this.ordersService.getAllOrders(),
     };
   }
 
@@ -50,8 +50,9 @@ export class OrdersController {
       return {
         success: true,
         order: result.order,
-        whatsappSent: result.whatsappSent,
+        whatsappSent: false,
         pdfPath: result.pdfPath,
+        downloadUrl: (result as any).downloadUrl,
       };
     } catch (err: any) {
       this.logger.error(`Create order failed: ${err.message}`);

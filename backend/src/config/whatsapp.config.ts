@@ -1,110 +1,53 @@
 // ╔══════════════════════════════════════════════════════════════════════╗
-// ║  🔧 WHATSAPP CONFIGURATION — UPDATE YOUR CREDENTIALS HERE         ║
+// ║  📱 META WHATSAPP CLOUD API CONFIGURATION (1,000 Free Msgs/Month)   ║
 // ║                                                                    ║
-// ║  Steps to get Twilio WhatsApp:                                     ║
-// ║  1. Sign up at https://www.twilio.com                              ║
-// ║  2. Go to Console > Messaging > WhatsApp Sandbox                   ║
-// ║  3. Copy your Account SID, Auth Token & WhatsApp number            ║
-// ║  4. Paste them below — that's it!                                  ║
-// ║                                                                    ║
-// ║  For production: Apply for a Twilio WhatsApp Business Profile      ║
+// ║  Free Tier Steps:                                                  ║
+// ║  1. Go to https://developers.facebook.com                           ║
+// ║  2. Create App > Type: Business > Add "WhatsApp" product          ║
+// ║  3. Copy your "Phone Number ID" and "Temporary / Permanent Token"   ║
+// ║  4. Put them in your backend .env file (explained in documentation) ║
 // ╚══════════════════════════════════════════════════════════════════════╝
 
 export const WHATSAPP_CONFIG = {
   // ──────────────────────────────────────────────
-  // 🔑 TWILIO CREDENTIALS (Get from https://console.twilio.com)
+  // 🔑 META WHATSAPP CLOUD API CREDENTIALS
   // ──────────────────────────────────────────────
-  TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID || 'YOUR_TWILIO_ACCOUNT_SID_HERE',
-  TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN || 'YOUR_TWILIO_AUTH_TOKEN_HERE',
+  META_WA_PHONE_NUMBER_ID: process.env.META_WA_PHONE_NUMBER_ID || '',
+  META_WA_ACCESS_TOKEN: process.env.META_WA_ACCESS_TOKEN || '',
+  META_WA_BUSINESS_ACCOUNT_ID: process.env.META_WA_BUSINESS_ACCOUNT_ID || '',
+  META_WA_API_VERSION: process.env.META_WA_API_VERSION || 'v21.0',
 
   // ──────────────────────────────────────────────
-  // 📱 YOUR TWILIO WHATSAPP SENDER NUMBER
-  // For sandbox: whatsapp:+14155238886
-  // For production: whatsapp:+91XXXXXXXXXX (your approved number)
+  // 📞 BUSINESS & OWNER NUMBERS
   // ──────────────────────────────────────────────
+  BUSINESS_WHATSAPP: process.env.BUSINESS_WHATSAPP || '+91 93284 00954',
+  OWNER_WHATSAPP: (process.env.OWNER_WHATSAPP || process.env.ADMIN_PHONE || '9328400954').replace(/\D/g, '').slice(-10),
+  ADMIN_WHATSAPP: (process.env.OWNER_WHATSAPP || process.env.ADMIN_PHONE || '9328400954').replace(/\D/g, '').slice(-10),
+  SEND_OWNER_COPY: process.env.SEND_OWNER_COPY === 'true' || true,
+
+  // ──────────────────────────────────────────────
+  // 🔄 FALLBACK / LEGACY TWILIO (If ever needed)
+  // ──────────────────────────────────────────────
+  TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID || '',
+  TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN || '',
   TWILIO_WHATSAPP_NUMBER: process.env.TWILIO_WHATSAPP_NUMBER || 'whatsapp:+14155238886',
-
-  // ──────────────────────────────────────────────
-  // 📞 YOUR BUSINESS WHATSAPP NUMBER (for display on receipts)
-  // ──────────────────────────────────────────────
-  BUSINESS_WHATSAPP: process.env.BUSINESS_WHATSAPP || '+91 98765 43210',
-
-  // ──────────────────────────────────────────────
-  // 👑 SHOP OWNER WHATSAPP (Optional: Receive copy of all receipts)
-  // ──────────────────────────────────────────────
-  OWNER_WHATSAPP: process.env.OWNER_WHATSAPP || '',
-  SEND_OWNER_COPY: process.env.SEND_OWNER_COPY === 'true' || false,
 };
 
-// ╔══════════════════════════════════════════════════════════════════════╗
-// ║  💬 HEARTWARMING MESSAGES — Customize your WhatsApp messages!      ║
-// ║  These are sent along with the PDF receipt.                         ║
-// ║  Add/remove/edit messages freely. One is picked randomly.           ║
-// ╚══════════════════════════════════════════════════════════════════════╝
-
 export const WHATSAPP_MESSAGES = [
-  // ──── Each message is a template. Use {name}, {total}, {shopName} ────
   {
     id: 'warm_1',
-    message: `🧇 *Thank you, {name}!* 🧇
-
-Your order at *{shopName}* is complete! 🎉
-
-💰 *Total: ₹{total}*
-
-Here's your receipt attached below 📄
-
-We hope every bite brought a smile! 😊
-Come back soon for more delicious moments! ✨
-
-_Good Food • Good Vibes • See You Soon!_ 💛`,
+    message: `🧇 *Thank you, {name}!* 🧇\n\nYour order at *{shopName}* is complete! 🎉\n\n💰 *Total: ₹{total}*\n\nHere's your receipt attached below 📄\n\nWe hope every bite brought a smile! 😊\nCome back soon for more delicious moments! ✨\n\n_Good Food • Good Vibes • See You Soon!_ 💛`,
   },
-
   {
     id: 'warm_2',
-    message: `Hey *{name}*! 👋
-
-Thanks for choosing *{shopName}*! 🍫🧇
-
-Your bill of *₹{total}* is attached below 📎
-
-We loved serving you today! Every waffle is made with love & the freshest ingredients 🥰
-
-_See you next time! Keep spreading sweetness!_ 🌟`,
+    message: `Hey *{name}*! 👋\n\nThanks for choosing *{shopName}*! 🍫🧇\n\nYour bill of *₹{total}* is attached below 📎\n\nWe loved serving you today! Every waffle is made with love & the freshest ingredients 🥰\n\n_See you next time! Keep spreading sweetness!_ 🌟`,
   },
-
   {
     id: 'warm_3',
-    message: `Hi *{name}*! 🎉
-
-Your *{shopName}* experience is complete! ✅
-
-📄 Receipt for *₹{total}* is attached.
-
-Thank you for making our day brighter! ☀️
-Every customer like you makes us love what we do 💕
-
-_Fresh Waffles • Happy Moods • Always!_ 🧇✨`,
-  },
-
-  {
-    id: 'warm_4',
-    message: `*{name}*, thank you SO much! 🙏❤️
-
-Your order of *₹{total}* at *{shopName}* is done!
-
-📋 Bill attached below for your records.
-
-You're not just a customer, you're family! 🤗
-We can't wait to see you again! 🧇🍓
-
-_Made with love, served with a smile!_ 😊`,
+    message: `Hi *{name}*! 🎉\n\nYour *{shopName}* experience is complete! ✅\n\n📄 Receipt for *₹{total}* is attached.\n\nThank you for making our day brighter! ☀️\nEvery customer like you makes us love what we do 💕\n\n_Fresh Waffles • Happy Moods • Always!_ 🧇✨`,
   },
 ];
 
-// ──────────────────────────────────────────────
-// 🎲 Helper: Get a random heartwarming message
-// ──────────────────────────────────────────────
 export function getWhatsAppMessage(customerName: string, total: number, shopName: string): string {
   const template = WHATSAPP_MESSAGES[Math.floor(Math.random() * WHATSAPP_MESSAGES.length)];
   return template.message

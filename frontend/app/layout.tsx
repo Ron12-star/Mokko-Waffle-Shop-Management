@@ -3,8 +3,8 @@ import "./globals.css";
 import { ToastProvider } from "@/lib/toastContext";
 
 export const metadata: Metadata = {
-  title: "MOKKO — Shop Management",
-  description: "MOKKO Waffles & Desserts — Shop Management System",
+  title: "MOKKO — Desserts & Coffee Management",
+  description: "MOKKO Desserts & Coffee — Shop POS, Kitchen & Analytics System",
 };
 
 export default function RootLayout({
